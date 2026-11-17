@@ -1,0 +1,516 @@
+<title>Trackeador de Postulaciones</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+  :root {
+    --bg: #fafafa;
+    --bg-secondary: #ffffff;
+    --fg: #1a1a1a;
+    --fg-secondary: #666;
+    --border: #e0e0e0;
+    --accent: #2563eb;
+    --accent-light: #dbeafe;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+
+    --font-display: "Inter", system-ui, sans-serif;
+    --font-body: "Inter", system-ui, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f172a;
+      --bg-secondary: #1e293b;
+      --fg: #f1f5f9;
+      --fg-secondary: #cbd5e1;
+      --border: #334155;
+      --accent: #3b82f6;
+      --accent-light: #1e3a8a;
+      color-scheme: dark;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #0f172a;
+    --bg-secondary: #1e293b;
+    --fg: #f1f5f9;
+    --fg-secondary: #cbd5e1;
+    --border: #334155;
+    --accent: #3b82f6;
+    --accent-light: #1e3a8a;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--fg);
+    padding-block: 0;
+    margin: 0;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  .header {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+    padding-block: 20px;
+    margin: 0 calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+    margin-right: calc(-1 * max(16px, env(safe-area-inset-right, 0px)));
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 10;
+  }
+
+  h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .stat-box {
+    background: var(--bg);
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--fg-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .stat-box.success .stat-value {
+    color: var(--success);
+  }
+
+  .stat-box.danger .stat-value {
+    color: var(--danger);
+  }
+
+  .container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding-block: 24px;
+    max-width: 1000px;
+  }
+
+  @media (min-width: 768px) {
+    .container {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--fg);
+  }
+
+  input, textarea {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    background: var(--bg);
+    color: var(--fg);
+  }
+
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-light);
+  }
+
+  button {
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+  }
+
+  button:hover {
+    background: #1d4ed8;
+  }
+
+  button:active {
+    transform: scale(0.98);
+  }
+
+  .applications-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .app-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 12px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 12px;
+  }
+
+  .app-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .app-company {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+
+  .app-time {
+    font-size: 12px;
+    color: var(--fg-secondary);
+  }
+
+  .app-delete {
+    background: var(--danger);
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  .app-delete:hover {
+    background: #dc2626;
+  }
+
+  .calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-top: 16px;
+  }
+
+  .calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    border-radius: 6px;
+    font-size: 11px;
+    text-align: center;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .calendar-day:hover {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .calendar-day.has-apps {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+
+  .calendar-day.today {
+    border: 2px solid var(--accent);
+  }
+
+  .calendar-day-num {
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  .calendar-day-count {
+    font-size: 9px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--fg-secondary);
+  }
+
+  .empty-state-icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.3s;
+    border-radius: 4px;
+  }
+</style>
+
+<div class="header">
+  <h1>📋 Trackeador de Postulaciones</h1>
+  <div class="stats">
+    <div class="stat-box" id="todayBox">
+      <div class="stat-label">Hoy</div>
+      <div class="stat-value">0</div>
+    </div>
+    <div class="stat-box" id="metaBox" class="success">
+      <div class="stat-label">Meta (20)</div>
+      <div class="stat-value">0/20</div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="card">
+    <h2>➕ Nueva Postulación</h2>
+    <form id="form">
+      <div class="form-group">
+        <label for="company">Empresa</label>
+        <input type="text" id="company" placeholder="ej: Google" required>
+      </div>
+      <div class="form-group">
+        <label for="url">URL de la Oferta (opcional)</label>
+        <input type="url" id="url" placeholder="https://...">
+      </div>
+      <button type="submit">Registrar Postulación</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>📅 Hoy</h2>
+    <div id="todayList" class="applications-list">
+      <div class="empty-state">
+        <div class="empty-state-icon">🎯</div>
+        <p>Sin postulaciones hoy. ¡Vamos!</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="grid-column: 1 / -1;">
+    <h2>📊 Calendario</h2>
+    <div id="calendar" class="calendar"></div>
+  </div>
+</div>
+
+<script>
+  const STORAGE_KEY = 'postulaciones';
+  const GOAL = 20;
+
+  class AppTracker {
+    constructor() {
+      this.loadData();
+      this.render();
+      this.setupForm();
+    }
+
+    loadData() {
+      try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        this.apps = data ? JSON.parse(data) : [];
+      } catch {
+        this.apps = [];
+      }
+    }
+
+    saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.apps));
+    }
+
+    addApp(company, url) {
+      this.apps.push({
+        id: Date.now().toString(),
+        company,
+        url,
+        date: this.getToday()
+      });
+      this.saveData();
+      this.render();
+    }
+
+    deleteApp(id) {
+      this.apps = this.apps.filter(app => app.id !== id);
+      this.saveData();
+      this.render();
+    }
+
+    getToday() {
+      const d = new Date();
+      return d.toISOString().split('T')[0];
+    }
+
+    getTodayCount() {
+      return this.apps.filter(app => app.date === this.getToday()).length;
+    }
+
+    getAppsByDate(date) {
+      return this.apps.filter(app => app.date === date).length;
+    }
+
+    getDateRange(days = 90) {
+      const dates = [];
+      for (let i = days - 1; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        dates.push(d.toISOString().split('T')[0]);
+      }
+      return dates;
+    }
+
+    render() {
+      this.renderStats();
+      this.renderTodayList();
+      this.renderCalendar();
+    }
+
+    renderStats() {
+      const todayCount = this.getTodayCount();
+      document.querySelector('#todayBox .stat-value').textContent = todayCount;
+
+      const metaBox = document.querySelector('#metaBox');
+      const metaValue = document.querySelector('#metaBox .stat-value');
+      metaValue.textContent = `${todayCount}/${GOAL}`;
+
+      if (todayCount >= GOAL) {
+        metaBox.classList.remove('danger');
+        metaBox.classList.add('success');
+      } else {
+        metaBox.classList.remove('success');
+        metaBox.classList.add('danger');
+      }
+    }
+
+    renderTodayList() {
+      const today = this.getToday();
+      const todayApps = this.apps
+        .filter(app => app.date === today)
+        .sort((a, b) => b.id - a.id);
+
+      const list = document.querySelector('#todayList');
+
+      if (todayApps.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🎯</div>
+            <p>Sin postulaciones hoy. ¡Vamos!</p>
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = todayApps.map(app => `
+        <div class="app-item">
+          <div class="app-info">
+            <div class="app-company">${app.company}</div>
+            <div class="app-time">${new Date(Number(app.id)).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}</div>
+          </div>
+          <button class="app-delete" onclick="tracker.deleteApp('${app.id}')">Eliminar</button>
+        </div>
+      `).join('');
+    }
+
+    renderCalendar() {
+      const cal = document.querySelector('#calendar');
+      const dates = this.getDateRange(42);
+      const today = this.getToday();
+
+      cal.innerHTML = dates.map(date => {
+        const count = this.getAppsByDate(date);
+        const d = new Date(date + 'T00:00:00');
+        const dayNum = d.getDate();
+        const isToday = date === today;
+
+        return `
+          <div class="calendar-day ${count > 0 ? 'has-apps' : ''} ${isToday ? 'today' : ''}">
+            <div class="calendar-day-num">${dayNum}</div>
+            ${count > 0 ? `<div class="calendar-day-count">${count}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    setupForm() {
+      document.querySelector('#form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const company = document.querySelector('#company').value.trim();
+        const url = document.querySelector('#url').value.trim();
+
+        if (company) {
+          this.addApp(company, url);
+          document.querySelector('#form').reset();
+          document.querySelector('#company').focus();
+        }
+      });
+    }
+  }
+
+  const tracker = new AppTracker();
+</script>
