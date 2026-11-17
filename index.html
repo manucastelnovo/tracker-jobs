@@ -2,46 +2,62 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <style>
   :root {
-    --bg: #fafafa;
+    --bg: #fafbfc;
     --bg-secondary: #ffffff;
-    --fg: #1a1a1a;
-    --fg-secondary: #666;
-    --border: #e0e0e0;
-    --accent: #2563eb;
-    --accent-light: #dbeafe;
-    --success: #10b981;
-    --danger: #ef4444;
-    --warning: #f59e0b;
+    --fg: #2d3748;
+    --fg-secondary: #718096;
+    --border: #e8ecf1;
+    --border-light: #f0f4f8;
+    --accent: #5a7a9f;
+    --accent-hover: #4a6a8f;
+    --accent-light: #f0f4f8;
+    --success: #6b8e73;
+    --success-light: #f0f5f1;
+    --danger: #a0616a;
+    --danger-light: #faf7f7;
+    --warning: #9d8b6f;
 
-    --font-display: "Inter", system-ui, sans-serif;
-    --font-body: "Inter", system-ui, sans-serif;
+    --font-display: "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Inter", sans-serif;
+    --font-body: "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Inter", sans-serif;
   }
 
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #0f172a;
-      --bg-secondary: #1e293b;
-      --fg: #f1f5f9;
-      --fg-secondary: #cbd5e1;
-      --border: #334155;
-      --accent: #3b82f6;
-      --accent-light: #1e3a8a;
+      --bg: #1a1f2e;
+      --bg-secondary: #252d3d;
+      --fg: #e4e6eb;
+      --fg-secondary: #9ca3af;
+      --border: #3f4654;
+      --border-light: #4a5368;
+      --accent: #7a8fa8;
+      --accent-hover: #6a7f98;
+      --accent-light: #2d3647;
+      --success-light: #2f3a2e;
+      --danger-light: #3a2e2e;
       color-scheme: dark;
     }
   }
 
   :root[data-theme="dark"] {
-    --bg: #0f172a;
-    --bg-secondary: #1e293b;
-    --fg: #f1f5f9;
-    --fg-secondary: #cbd5e1;
-    --border: #334155;
-    --accent: #3b82f6;
-    --accent-light: #1e3a8a;
+    --bg: #1a1f2e;
+    --bg-secondary: #252d3d;
+    --fg: #e4e6eb;
+    --fg-secondary: #9ca3af;
+    --border: #3f4654;
+    --border-light: #4a5368;
+    --accent: #7a8fa8;
+    --accent-hover: #6a7f98;
+    --accent-light: #2d3647;
+    --success-light: #2f3a2e;
+    --danger-light: #3a2e2e;
     color-scheme: dark;
   }
 
   * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+  }
 
   body {
     font-family: var(--font-body);
@@ -51,12 +67,13 @@
     margin: 0;
     padding-left: max(16px, env(safe-area-inset-left, 0px));
     padding-right: max(16px, env(safe-area-inset-right, 0px));
+    line-height: 1.6;
   }
 
   .header {
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border);
-    padding-block: 20px;
+    padding-block: 24px;
     margin: 0 calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
     margin-right: calc(-1 * max(16px, env(safe-area-inset-right, 0px)));
     padding-left: max(16px, env(safe-area-inset-left, 0px));
@@ -64,43 +81,65 @@
     position: sticky;
     top: env(safe-area-inset-top, 0px);
     z-index: 10;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .header {
+      background: rgba(26, 32, 44, 0.95);
+    }
   }
 
   h1 {
-    font-size: 24px;
-    font-weight: 700;
+    font-size: 28px;
+    font-weight: 800;
     margin: 0;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    letter-spacing: -0.5px;
   }
 
   .stats {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-top: 16px;
+    gap: 12px;
+    margin-top: 20px;
   }
 
   .stat-box {
-    background: var(--bg);
+    background: var(--accent-light);
     padding: 16px;
-    border-radius: 8px;
+    border-radius: 12px;
     border: 1px solid var(--border);
+    transition: all 0.3s ease;
+  }
+
+  .stat-box.danger {
+    background: var(--danger-light);
+    border-color: var(--border);
+  }
+
+  .stat-box.success {
+    background: var(--success-light);
+    border-color: var(--border);
   }
 
   .stat-label {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--fg-secondary);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
     margin-bottom: 8px;
+    font-weight: 600;
   }
 
   .stat-value {
-    font-size: 32px;
-    font-weight: 700;
+    font-size: 36px;
+    font-weight: 800;
     color: var(--accent);
+    letter-spacing: -1px;
   }
 
   .stat-box.success .stat-value {
@@ -115,8 +154,8 @@
     display: grid;
     grid-template-columns: 1fr;
     gap: 24px;
-    padding-block: 24px;
-    max-width: 1000px;
+    padding-block: 32px;
+    max-width: 1100px;
   }
 
   @media (min-width: 768px) {
@@ -128,85 +167,124 @@
   .card {
     background: var(--bg-secondary);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+  }
+
+  .card:hover {
+    border-color: var(--border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   }
 
   h2 {
-    font-size: 18px;
-    font-weight: 600;
-    margin: 0 0 16px 0;
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 20px 0;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    color: var(--fg);
   }
 
   .form-group {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-bottom: 16px;
+    gap: 10px;
+    margin-bottom: 18px;
   }
 
   label {
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--fg);
+    display: block;
   }
 
-  input, textarea {
-    padding: 10px 12px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
+  input, textarea, select {
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
     font-family: var(--font-body);
     font-size: 14px;
     background: var(--bg);
     color: var(--fg);
+    transition: all 0.2s ease;
   }
 
-  input:focus, textarea:focus {
+  input:focus, textarea:focus, select:focus {
     outline: none;
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-light);
+    box-shadow: 0 0 0 4px var(--accent-light);
+    background: var(--bg-secondary);
   }
 
   button {
     background: var(--accent);
     color: white;
     border: none;
-    padding: 12px 16px;
-    border-radius: 6px;
+    padding: 14px 24px;
+    border-radius: 10px;
     font-weight: 600;
     cursor: pointer;
     font-size: 14px;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
+    letter-spacing: 0.3px;
   }
 
   button:hover {
-    background: #1d4ed8;
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(90, 122, 159, 0.15);
   }
 
   button:active {
-    transform: scale(0.98);
+    transform: translateY(0);
   }
 
   .applications-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    max-height: 400px;
+    gap: 10px;
+    max-height: 450px;
     overflow-y: auto;
+    padding-right: 8px;
+  }
+
+  .applications-list::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .applications-list::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .applications-list::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
   }
 
   .app-item {
     background: var(--bg);
-    border: 1px solid var(--border);
-    padding: 12px;
-    border-radius: 8px;
+    border: 1.5px solid var(--border-light);
+    padding: 14px 16px;
+    border-radius: 12px;
     display: flex;
     justify-content: space-between;
-    align-items: start;
+    align-items: center;
     gap: 12px;
+    transition: all 0.2s ease;
+  }
+
+  .app-item[onclick] {
+    cursor: pointer;
+  }
+
+  .app-item[onclick]:hover {
+    border-color: var(--border);
+    background: var(--accent-light);
+    transform: translateX(2px);
   }
 
   .app-info {
@@ -215,36 +293,104 @@
   }
 
   .app-company {
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: 700;
+    font-size: 15px;
     margin-bottom: 4px;
+    color: var(--fg);
   }
 
   .app-time {
     font-size: 12px;
     color: var(--fg-secondary);
+    font-weight: 500;
   }
 
   .app-delete {
     background: var(--danger);
     color: white;
     border: none;
-    padding: 6px 10px;
-    border-radius: 4px;
+    padding: 8px 12px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 12px;
+    font-weight: 600;
     flex-shrink: 0;
+    transition: all 0.2s ease;
   }
 
   .app-delete:hover {
-    background: #dc2626;
+    background: var(--danger);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+  }
+
+  .app-delete:active {
+    transform: scale(0.95);
+  }
+
+  .month-section {
+    margin-bottom: 24px;
+  }
+
+  .month-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .month-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--fg);
+    letter-spacing: -0.5px;
+  }
+
+  .month-stats {
+    display: flex;
+    gap: 20px;
+    font-size: 12px;
+  }
+
+  .month-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .month-stat-value {
+    font-weight: 800;
+    font-size: 24px;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+  }
+
+  .month-stat-label {
+    color: var(--fg-secondary);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-top: 4px;
+    letter-spacing: 0.5px;
   }
 
   .calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
-    margin-top: 16px;
+    gap: 8px;
+  }
+
+  .calendar-weekday {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--fg-secondary);
+    padding: 12px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
   .calendar-day {
@@ -253,65 +399,100 @@
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    border-radius: 6px;
-    font-size: 11px;
+    border-radius: 12px;
+    font-size: 12px;
     text-align: center;
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border-light);
     background: var(--bg);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
+    min-height: 56px;
+    font-weight: 600;
   }
 
-  .calendar-day:hover {
-    border-color: var(--accent);
+  .calendar-day.empty {
+    background: transparent;
+    border: none;
+    cursor: default;
+  }
+
+  .calendar-day.other-month {
+    color: var(--fg-secondary);
+    opacity: 0.4;
+  }
+
+  .calendar-day:hover:not(.empty) {
+    border-color: var(--border);
     background: var(--accent-light);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(90, 122, 159, 0.08);
   }
 
   .calendar-day.has-apps {
     background: var(--accent);
     color: white;
     border-color: var(--accent);
-    font-weight: 600;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(90, 122, 159, 0.15);
+  }
+
+  .calendar-day.meta-reached {
+    background: var(--success);
+    color: white;
+    border-color: var(--success);
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(107, 142, 115, 0.15);
   }
 
   .calendar-day.today {
     border: 2px solid var(--accent);
+    box-shadow: 0 0 0 2px var(--bg-secondary), 0 2px 8px rgba(90, 122, 159, 0.1);
   }
 
   .calendar-day-num {
-    font-size: 10px;
-    font-weight: 600;
+    font-size: 14px;
+    font-weight: 800;
   }
 
   .calendar-day-count {
-    font-size: 9px;
+    font-size: 11px;
+    margin-top: 2px;
+    opacity: 0.9;
   }
 
   .empty-state {
     text-align: center;
-    padding: 32px 16px;
+    padding: 48px 24px;
     color: var(--fg-secondary);
   }
 
   .empty-state-icon {
-    font-size: 32px;
-    margin-bottom: 12px;
+    font-size: 48px;
+    margin-bottom: 16px;
+    display: block;
+    opacity: 0.7;
+  }
+
+  .empty-state p {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
   }
 
   .progress-bar {
     width: 100%;
-    height: 8px;
+    height: 10px;
     background: var(--border);
-    border-radius: 4px;
+    border-radius: 10px;
     overflow: hidden;
-    margin-top: 8px;
+    margin-top: 12px;
   }
 
   .progress-fill {
     height: 100%;
-    background: var(--accent);
-    transition: width 0.3s;
-    border-radius: 4px;
+    background: linear-gradient(90deg, var(--accent) 0%, var(--accent-hover) 100%);
+    transition: width 0.3s ease;
+    border-radius: 10px;
   }
 </style>
 
@@ -356,8 +537,13 @@
   </div>
 
   <div class="card" style="grid-column: 1 / -1;">
-    <h2>📊 Calendario</h2>
-    <div id="calendar" class="calendar"></div>
+    <h2>📊 Histórico</h2>
+    <div style="display: flex; gap: 12px; margin-bottom: 20px; align-items: center;">
+      <label for="monthSelector" style="font-weight: 600;">Seleccionar mes:</label>
+      <select id="monthSelector" style="padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg); color: var(--fg); font-size: 14px; cursor: pointer;">
+      </select>
+    </div>
+    <div id="calendarContainer"></div>
   </div>
 </div>
 
@@ -428,6 +614,9 @@
     render() {
       this.renderStats();
       this.renderTodayList();
+      if (!document.querySelector('#monthSelector').querySelector('option')) {
+        this.renderCalendarSelector();
+      }
       this.renderCalendar();
     }
 
@@ -467,34 +656,131 @@
       }
 
       list.innerHTML = todayApps.map(app => `
-        <div class="app-item">
+        <div class="app-item" ${app.url ? `onclick="window.open('${app.url}', '_blank')"` : ''} style="${app.url ? 'cursor: pointer;' : ''}">
           <div class="app-info">
             <div class="app-company">${app.company}</div>
             <div class="app-time">${new Date(Number(app.id)).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}</div>
           </div>
-          <button class="app-delete" onclick="tracker.deleteApp('${app.id}')">Eliminar</button>
+          <button class="app-delete" onclick="event.stopPropagation(); tracker.deleteApp('${app.id}')">Eliminar</button>
         </div>
       `).join('');
     }
 
+    renderCalendarSelector() {
+      const selector = document.querySelector('#monthSelector');
+      const today = new Date();
+      selector.innerHTML = '';
+
+      const months = new Set();
+      const minDate = this.apps.length > 0
+        ? new Date(Math.min(...this.apps.map(app => new Date(app.date))))
+        : today;
+
+      for (let d = new Date(minDate.getFullYear(), minDate.getMonth(), 1); d <= today; d.setMonth(d.getMonth() + 1)) {
+        months.add(`${d.getFullYear()}-${d.getMonth()}`);
+      }
+
+      Array.from(months)
+        .sort()
+        .reverse()
+        .forEach((monthKey, index) => {
+          const [year, month] = monthKey.split('-').map(Number);
+          const d = new Date(year, month, 1);
+          const monthStr = d.toLocaleString('es-AR', { month: 'long', year: 'numeric' });
+          const option = document.createElement('option');
+          option.value = monthKey;
+          option.textContent = monthStr.charAt(0).toUpperCase() + monthStr.slice(1);
+          option.selected = index === 0;
+          selector.appendChild(option);
+        });
+
+      selector.addEventListener('change', () => this.renderCalendar());
+    }
+
     renderCalendar() {
-      const cal = document.querySelector('#calendar');
-      const dates = this.getDateRange(42);
-      const today = this.getToday();
+      const selector = document.querySelector('#monthSelector');
+      const [year, month] = selector.value.split('-').map(Number);
 
-      cal.innerHTML = dates.map(date => {
-        const count = this.getAppsByDate(date);
-        const d = new Date(date + 'T00:00:00');
-        const dayNum = d.getDate();
-        const isToday = date === today;
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const daysInMonth = lastDay.getDate();
+      const startingDayOfWeek = firstDay.getDay();
 
-        return `
-          <div class="calendar-day ${count > 0 ? 'has-apps' : ''} ${isToday ? 'today' : ''}">
-            <div class="calendar-day-num">${dayNum}</div>
-            ${count > 0 ? `<div class="calendar-day-count">${count}</div>` : ''}
+      const monthStr = firstDay.toLocaleString('es-AR', { month: 'long', year: 'numeric' });
+      const monthApps = [];
+      const monthMetaMet = [];
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const count = this.getAppsByDate(dateStr);
+        monthApps.push(count);
+        if (count >= GOAL) monthMetaMet.push(day);
+      }
+
+      const totalApps = monthApps.reduce((a, b) => a + b, 0);
+      const daysWithMeta = monthMetaMet.length;
+
+      const calendarDays = [];
+      for (let i = 0; i < startingDayOfWeek; i++) {
+        calendarDays.push({ empty: true });
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const count = this.getAppsByDate(dateStr);
+        const isToday = dateStr === this.getToday();
+        const metaReached = count >= GOAL;
+
+        calendarDays.push({
+          day,
+          count,
+          metaReached,
+          isToday,
+          dateStr
+        });
+      }
+
+      const weekdayLabels = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+      const container = document.querySelector('#calendarContainer');
+
+      container.innerHTML = `
+        <div class="month-section">
+          <div class="month-header">
+            <div class="month-title">${monthStr.charAt(0).toUpperCase() + monthStr.slice(1)}</div>
+            <div class="month-stats">
+              <div class="month-stat">
+                <div class="month-stat-value">${totalApps}</div>
+                <div class="month-stat-label">Total CVs</div>
+              </div>
+              <div class="month-stat">
+                <div class="month-stat-value" style="color: var(--success);">${daysWithMeta}</div>
+                <div class="month-stat-label">Días meta</div>
+              </div>
+            </div>
           </div>
-        `;
-      }).join('');
+          <div class="calendar">
+            ${weekdayLabels.map(label => `<div class="calendar-weekday">${label}</div>`).join('')}
+            ${calendarDays.map(day => {
+              if (day.empty) {
+                return '<div class="calendar-day empty"></div>';
+              }
+              const classes = [
+                'calendar-day',
+                day.metaReached && 'meta-reached',
+                day.count > 0 && !day.metaReached && 'has-apps',
+                day.isToday && 'today'
+              ].filter(Boolean).join(' ');
+
+              return `
+                <div class="${classes}" title="${day.dateStr}: ${day.count} CVs">
+                  <div class="calendar-day-num">${day.day}</div>
+                  <div class="calendar-day-count">${day.count}</div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
     }
 
     setupForm() {
