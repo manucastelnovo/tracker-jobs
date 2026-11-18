@@ -524,6 +524,9 @@
 
   <div class="card">
     <h2>📅 Hoy</h2>
+    <div class="form-group">
+      <input type="text" id="searchInput" placeholder="Buscar empresa..." style="margin-bottom: 0;">
+    </div>
     <div id="todayList" class="applications-list">
       <div class="empty-state">
         <div class="empty-state-icon">🎯</div>
@@ -633,19 +636,25 @@
       }
     }
 
-    renderTodayList() {
+    renderTodayList(searchTerm = '') {
       const today = this.getToday();
-      const todayApps = this.apps
+      let todayApps = this.apps
         .filter(app => app.date === today)
         .sort((a, b) => b.id - a.id);
+
+      if (searchTerm) {
+        todayApps = todayApps.filter(app =>
+          app.company.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }
 
       const list = document.querySelector('#todayList');
 
       if (todayApps.length === 0) {
         list.innerHTML = `
           <div class="empty-state">
-            <div class="empty-state-icon">🎯</div>
-            <p>Sin postulaciones hoy. ¡Vamos!</p>
+            <div class="empty-state-icon">${searchTerm ? '🔍' : '🎯'}</div>
+            <p>${searchTerm ? 'No encontramos esa empresa.' : 'Sin postulaciones hoy. ¡Vamos!'}</p>
           </div>
         `;
         return;
@@ -789,7 +798,12 @@
           this.addApp(company, url);
           document.querySelector('#form').reset();
           document.querySelector('#company').focus();
+          document.querySelector('#searchInput').value = '';
         }
+      });
+
+      document.querySelector('#searchInput').addEventListener('input', (e) => {
+        this.renderTodayList(e.target.value);
       });
     }
   }
